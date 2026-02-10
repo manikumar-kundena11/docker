@@ -1,0 +1,33 @@
+1. Java Code (Login.java)
+(5 lines. Use nano Login.java to create it.)
+
+Java
+import java.util.Scanner;
+class Login {
+    public static void main(String[] a) {
+        var s = new Scanner(System.in);
+        System.out.print("User: ");
+        String u = s.next();
+        System.out.print("Pass: ");
+        // Check if user is "admin" and password is "123"
+        System.out.println((u.equals("admin") && s.next().equals("123")) ? "Success" : "Denied");
+    }
+}
+2. Dockerfile
+(3 lines. Use nano Dockerfile to create it.)
+
+Dockerfile
+FROM eclipse-temurin:17-jdk
+COPY Login.java .
+CMD ["java", "Login.java"]
+3. Execution in Terminal
+You MUST use the -it flag. This stands for "Interactive Terminal" and allows you to type inside the container.
+
+Build:
+
+Bash
+sudo docker build -t login-term .
+Run (The Important Part):
+
+Bash
+sudo docker run -it login-term
