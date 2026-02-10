@@ -1,0 +1,53 @@
+1. Java Code (LoginWeb.java)
+(Create this file. It sets up a web page at Port 9090.)
+
+Java
+import com.sun.net.httpserver.*;
+import java.net.InetSocketAddress;
+import java.io.*;
+
+public class LoginWeb {
+    public static void main(String[] args) throws IOException {
+        // Create server on Port 9090
+        HttpServer server = HttpServer.create(new InetSocketAddress(9090), 0);
+        
+        server.createContext("/", ex -> {
+            String res = "<html><body><h2>Login</h2><form method='POST'>User: <input name='u'><br>Pass: <input name='p'><br><input type='submit'></form></body></html>";
+            
+            if ("POST".equals(ex.getRequestMethod())) {
+                String body = new String(ex.getRequestBody().readAllBytes());
+                // Simple password check (User: admin, Pass: 123)
+                if (body.contains("admin") && body.contains("123")) {
+                    res = "<h1>Login Successful</h1>";
+                } else {
+                    res = "<h1>Access Denied</h1>";
+                }
+            }
+            
+            ex.sendResponseHeaders(200, res.length());
+            ex.getResponseBody().write(res.getBytes());
+            ex.getResponseBody().close();
+        });
+        
+        server.start();
+        System.out.println("Server started on Port 9090");
+    }
+}
+2. Dockerfile
+(We use the Java 17 trick to skip compilation and keep it short.)
+
+Dockerfile
+FROM eclipse-temurin:17-jdk
+COPY LoginWeb.java .
+CMD ["java", "LoginWeb.java"]
+3. Build & Run Commands (Use sudo!)
+Build the Image:
+
+Bash
+sudo docker build -t login-web .
+Run with Port Mapping (Crucial):
+
+You MUST use -p 9090:9090. This connects your laptop's port to the Docker container's port.
+
+Bash
+sudo docker run -p 9090:9090 login-web
